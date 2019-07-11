@@ -31,6 +31,7 @@ $BINDIR/indexmaker $FASTAY.rev $FASTAY.rev.idx
 
 sed 's/,/ /g' $FRAGS > $FRAGS.fix
 
+#echo "$BINDIR/csvExtractRepeatsAndBorders $FRAGS.fix $FASTAX $FASTAY $FASTAY.rev $FASTAX.idx $FASTAY.idx $FASTAY.rev.idx $ALIGN $BORDER"
 $BINDIR/csvExtractRepeatsAndBorders $FRAGS.fix $FASTAX $FASTAY $FASTAY.rev $FASTAX.idx $FASTAY.idx $FASTAY.rev.idx $ALIGN $BORDER
 
 
