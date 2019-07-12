@@ -17,9 +17,9 @@ def get_color(nucleotide):
     elif nucleotide == 'T':
         # yellow
         return [1.0, 1.0, 0.0]
-	elif nucleotide == 'N':
-		# white
-		return [1.0, 1.0, 1.0]
+    elif nucleotide == 'N':
+        # white
+        return [1.0, 1.0, 1.0]
 
     else:
         # black
