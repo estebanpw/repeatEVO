@@ -1,10 +1,10 @@
 #!/bin/bash
 
 
-if [ "$#" -ne 4 ]; then
+if [ "$#" -lt 4 ]; then
    echo " ==== ERROR ... you called this script inappropriately."
    echo ""
-   echo "   usage:  $0 <repeatScout repeats> <repeatID> <dna sequence> <border>"
+   echo "   usage:  $0 <repeatScout repeats> <repeatID> <dna sequence> <border> [%minLen]"
    echo ""
    exit -1
 fi
@@ -13,6 +13,16 @@ REPEATS=$1
 ID=$2
 DNA=$3
 BORDER=$4
+PERCENTAGE=0.7
+
+if [ "$#" -eq "5" ]
+then
+
+	PERCENTAGE=$5
+
+fi
+
+echo "Using percentage $PERCENTAGE"
 
 # Converts multifasta line to single-line fasta
 awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);}  END {printf("\n");}' < $REPEATS > $REPEATS.oneline
@@ -40,8 +50,8 @@ blastn -query repeat-$ID.fasta -db $dbDNA -outfmt 6 -out all-repeats-$ID.blast
 awk -v OFS="\t" -v border="$BORDER" '{ if($9 < $10) { print $1,$2,$3,$4,$5,$6,$7,$8,$9-border,$10+border,$11,$12} else { print $1,$2,$3,$4,$5,$6,$7,$8,$9+border,$10-border,$11,$12  }  }' all-repeats-$ID.blast > all-repeats-$ID-border.blast
 
 
-# Extract DNA from repetitions (minimum a 70% of the original rep)
-percentageLength=$(echo "" |  awk -v num="$length" '{ printf("%d", num*0.7) }')
+# Extract DNA from repetitions (minimum a 70% of the original rep (or given param))
+percentageLength=$(echo "" |  awk -v num="$length" -v perc="$PERCENTAGE" '{ printf("%d", num*perc) }')
 echo "Looking for repeats of size (minimum) $percentageLength"
 /home/estebanpw/software/seqExtractor/seqExtractorNatural all-repeats-$ID-border.blast $dbDNA $percentageLength > all-repeats-from-$ID.fasta
 
