@@ -47,12 +47,18 @@ makeblastdb -dbtype nucl -in $dbDNA
 # Run blast
 blastn -query repeat-$ID.fasta -db $dbDNA -outfmt 6 -out all-repeats-$ID.blast
 
-awk -v OFS="\t" -v border="$BORDER" '{ if($9 < $10) { print $1,$2,$3,$4,$5,$6,$7,$8,$9-border,$10+border,$11,$12} else { print $1,$2,$3,$4,$5,$6,$7,$8,$9+border,$10-border,$11,$12  }  }' all-repeats-$ID.blast > all-repeats-$ID-border.blast
-
-
-# Extract DNA from repetitions (minimum a 70% of the original rep (or given param))
+# Calculate min length
 percentageLength=$(echo "" |  awk -v num="$length" -v perc="$PERCENTAGE" '{ printf("%d", num*perc) }')
 echo "Looking for repeats of size (minimum) $percentageLength"
+
+cat all-repeats-$ID.blast | awk -v OFS="\t" -v minlen="$percentageLength" '{ if($4 > minlen) { print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12}  }' > all-repeats-$ID-filtered.blast
+
+rm all-repeats-$ID.blast
+mv all-repeats-$ID-filtered.blast all-repeats-$ID.blast
+
+
+awk -v OFS="\t" -v border="$BORDER" '{ if($9 < $10) { print $1,$2,$3,$4,$5,$6,$7,$8,$9-border,$10+border,$11,$12} else { print $1,$2,$3,$4,$5,$6,$7,$8,$9+border,$10-border,$11,$12  }  }' all-repeats-$ID.blast > all-repeats-$ID-border.blast
+
 /home/estebanpw/software/seqExtractor/seqExtractorNatural all-repeats-$ID-border.blast $dbDNA $percentageLength > all-repeats-from-$ID.fasta
 
 # Align the repetitions
