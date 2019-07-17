@@ -70,6 +70,9 @@ source /home/estebanpw/software/repeatEVO/plot/plotenv/bin/activate
 # Run conservation analysis
 python /home/estebanpw/software/repeatEVO/plot/clustal2image.py -i all-repeats-from-$ID.aln -o .
 
+# Run significance profile
+python /home/estebanpw/software/repeatEVO/plot/rep_histogram.py -i all-repeats-$ID.blast -o .
+
 # Deactivate unwanted programs (I dont want virtualenv)
 deactivate
 
